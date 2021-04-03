@@ -11,7 +11,7 @@ for (dirpath, dirnames, filenames) in walk(mypath):
     files.extend(filenames)
     break
 if not files:  # if files is empty
-    raise Exception("Warning there are no filenames, check the path!")
+    raise Exception("Warning there are no files, check the path!")
     quit()  # no need to proceed
 
 
@@ -58,7 +58,7 @@ for index, name in enumerate(files):
 
     start = 0
 
-    start = 0 
+    start = 0
     for feature in record.features:
 
         locations = feature.location
@@ -97,13 +97,13 @@ for index, name in enumerate(files):
         elif genes[-3:] != "TAA" and genes[-3:] != "TAG" and genes[-3:] != "TGA":
             ok = 3
 
-        # Saving both the complementary and "normal"(come se chiamano?) genes
+        # Saving both the complementary and "normal" genes
         if ok == 0:
             coding_sequences.append(genes)
 
         # Checking for errors
         check = False
-        if check and st == 1 and ok != 0: # Perchè "st == 1"?
+        if check and st == 1 and ok != 0:  # Perchè "st == 1"?
             print(locations)
             print(ok)
             print(genes[:3])
@@ -113,7 +113,7 @@ for index, name in enumerate(files):
     if gene_end != len(sequence):
         ig_sequence = sequence[gene_end:len(sequence)]
         intergenomic_sequence.append(str(ig_sequence))
-        intergenomic_sequence_list.append([gene_end, len(sequence)] )
+        intergenomic_sequence_list.append([gene_end, len(sequence)])
 
     intergenomic_sequence_string = "".join(intergenomic_sequence)
 
@@ -148,12 +148,12 @@ for index, name in enumerate(files):
             Tcount += T3
     GC3 = ((Gcount + Ccount) / (Gcount + Ccount + Acount + Tcount) * 100)
     print(f'GC3: {(GC3):.2f}%')
-    GC3content.append(GC3)  # Perchè avevi fatto str?
+    GC3content.append(GC3)
 
     # Amino acids usage
     coding_sequence_whole = "".join(coding_sequences)
     aminoacids_sequence = Seq.Seq(coding_sequence_whole)
-    aminoacids_sequence = aminoacids_sequence.translate()  # ah mò lo usi il translate ahhaha
+    aminoacids_sequence = aminoacids_sequence.translate()
     # number of Valine
     # print(f'Total Valine: {aminoacids_sequence.count("V")}')
     print(f'Percentage of Valine:        {(aminoacids_sequence.count("V") / len(aminoacids_sequence) * 100):.2f}%')
@@ -169,7 +169,7 @@ for index, name in enumerate(files):
     LeuPer.append(aminoacids_sequence.count("L") / len(aminoacids_sequence) * 100)  # Float value
     # number of Serine
     print(f'Percentage of Serine:        {(aminoacids_sequence.count("S") / len(aminoacids_sequence) * 100):.2f}%')
-    SerPer.append(aminoacids_sequence.count("S") / len(aminoacids_sequence) * 100)  # Float value + AGGIUNTA PERCENTUALEEEE!!!
+    SerPer.append(aminoacids_sequence.count("S") / len(aminoacids_sequence) * 100)  # Float value
     # number of Isoleucine
     print(f'Percentage of Isoleucine:    {(aminoacids_sequence.count("I") / len(aminoacids_sequence) * 100):.2f}%')
     IsoPer.append(aminoacids_sequence.count("I") / len(aminoacids_sequence) * 100)  # Float value
@@ -181,7 +181,7 @@ for index, name in enumerate(files):
     ThrPer.append(aminoacids_sequence.count("T") / len(aminoacids_sequence) * 100)  # Float value
     # number of Alanine
     print(f'Percentage of Alanine:       {(aminoacids_sequence.count("A") / len(aminoacids_sequence) * 100):.2f}%')
-    AlaPer.append(aminoacids_sequence.count("A") / len(aminoacids_sequence) * 100)  # Float value + AGGIUNTA PERCENTUALEEEE!!!
+    AlaPer.append(aminoacids_sequence.count("A") / len(aminoacids_sequence) * 100)  # Float value
     # number of Tyrosine
     print(f'Percentage of Tyrosine:      {(aminoacids_sequence.count("Y") / len(aminoacids_sequence) * 100):.2f}%')
     TyrPer.append(aminoacids_sequence.count("Y") / len(aminoacids_sequence) * 100)  # Float value
@@ -251,7 +251,7 @@ for index, name in enumerate(files):
     GCGcount = 0
     GCTcount = 0
 
-    for cds in coding_sequences: # Potrebbero essere uniti al loop di prima volendo 
+    for cds in coding_sequences:
         for i in range(0, len(cds), 3):
             codons = cds[i: i + 3]
 
@@ -338,37 +338,68 @@ for index, name in enumerate(files):
     print(
         f'Codon usage for Alanine:\n GCA percentage: {(GCAcount * 100 / (AlanineTotal)):.2f}% \n GCC percentage: {(GCCcount * 100 / (AlanineTotal)):.2f}% \n GCG percentage: {(GCGcount * 100 / (AlanineTotal)):.2f}% \n GCT percentage: {(GCTcount * 100 / (AlanineTotal)):.2f}%')
 
-# Eliminata perchè vuota
-# "IlePer": IlePer, 
-df = pd.DataFrame(
-    {
-        "Name": FileNames,
-        "GCcontent": GCcontent,
-        "IntergenomicGC": IntergenomicGC,
-        "GC3content": GC3content,
-        "PhePer": PhePer,
-        "LeuPer": LeuPer,
 
-        "MetPer": MetPer,
-        "ValPer": ValPer,
-        "SerPer": SerPer,
-        "IsoPer": IsoPer,
-        "ProPer": ProPer,
-        "ThrPer": ThrPer,
-        "AlaPer": AlaPer,
-        "TyrPer": TyrPer,
-        "HisPer": HisPer,
-        "GlnPer": GlnPer,
-        "AsnPer": AsnPer,
-        "LysPer": LysPer,
-        "AspPer": AspPer,
-        "GluPer": GluPer,
-        "CysPer": CysPer,
-        "TrpPer": TrpPer,
-        "ArgPer": ArgPer,
-        "GlyPer": GlyPer
-    }
+print("Building Pandas DataFrame")
+# Eliminata perchè vuota
+# "IlePer": IlePer,
+df = pd.DataFrame(
+    data=list(zip(
+        FileNames,
+        GCcontent,
+        IntergenomicGC,
+        GC3content,
+        PhePer,
+        LeuPer,
+
+        MetPer,
+        ValPer,
+        SerPer,
+        IsoPer,
+        ProPer,
+        ThrPer,
+        AlaPer,
+        TyrPer,
+        HisPer,
+        GlnPer,
+        AsnPer,
+        LysPer,
+        AspPer,
+        GluPer,
+        CysPer,
+        TrpPer,
+        ArgPer,
+        GlyPer)
+    ),
+    columns=[
+        "Name",
+        "GCcontent",
+        "IntergenomicGC",
+        "GC3content",
+        "PhePer",
+        "LeuPer",
+
+        "MetPer",
+        "ValPer",
+        "SerPer",
+        "IsoPer",
+        "ProPer",
+        "ThrPer",
+        "AlaPer",
+        "TyrPer",
+        "HisPer",
+        "GlnPer",
+        "AsnPer",
+        "LysPer",
+        "AspPer",
+        "GluPer",
+        "CysPer",
+        "TrpPer",
+        "ArgPer",
+        "GlyPer"
+    ],
+    index=range(1, files_tot+1)
 )
 
-df.head()
-df.to_csv("results.csv")
+folder = "results/"
+print(f"Saving data to the {folder} folder")
+df.to_csv(f"{folder}data", index=False)
