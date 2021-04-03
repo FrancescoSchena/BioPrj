@@ -1,6 +1,10 @@
 # Local artifacts
-*.csv
+
 genomes/
+results/
+.vscode
+.DS_store
+.ipynb_checkpoints   
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
