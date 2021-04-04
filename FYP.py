@@ -8,7 +8,9 @@ mypath = os.path.abspath(os.getcwd()) + "/genomes"
 ext = "embl"
 files = []
 for (dirpath, dirnames, filenames) in walk(mypath):
-    files.extend(filenames)
+    for file in filenames:
+        if file.split(".")[1] == ext:  # Only files with the right extension
+            files.append(file)
     break
 if not files:  # if files is empty
     raise Exception("Warning there are no files, check the path!")
@@ -58,7 +60,6 @@ for index, name in enumerate(files):
 
     start = 0
 
-    start = 0
     for feature in record.features:
 
         locations = feature.location
@@ -402,4 +403,4 @@ df = pd.DataFrame(
 
 folder = "results/"
 print(f"Saving data to the {folder} folder")
-df.to_csv(f"{folder}data", index=False)
+df.to_csv(f"{folder}data.csv", index=False)
