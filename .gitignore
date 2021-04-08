@@ -1,6 +1,7 @@
 # Local artifacts
 
 genomes/
+filtered_genomes/
 results/
 .vscode
 .DS_store
