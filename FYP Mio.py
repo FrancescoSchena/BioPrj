@@ -196,16 +196,16 @@ for index, name in enumerate(files):
     listadicodonitotale.append(listadicodoniperfile)
 
     
-dataframedata = []
+dataframe_data = []
 temp = []
-for index, i in enumerate(listadicodonitotale):
+for index, listaperfile2 in enumerate(listadicodonitotale):
     temp = [FileNames[index], IntergenomicGC[index]]
-    for x in i:
-        temp.extend([x])
-    dataframedata.append(temp)
+    for cosa in listaperfile2:
+        temp.extend([cosa])
+    dataframe_data.append(temp)
 
 df = pd.DataFrame(
-    data=dataframedata,
+    data=dataframe_data,
     columns=[
         "Name",
         "IntergenomicGC",
