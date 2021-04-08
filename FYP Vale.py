@@ -66,6 +66,7 @@ for index, name in enumerate(files):
     print("\n")
     print(f"Analyzing file {index+1} of {files_tot}: {name}")
     print("\n")
+
     record = SeqIO.read(f'filtered_genomes/{name}', ext)
     sequence = record.seq
     FileNames.append(str(name))
@@ -75,14 +76,14 @@ for index, name in enumerate(files):
     intergenomic_sequence = []  # It will contain the sequences out of the locations bounds
     intergenomic_sequence_list = []  # It will contain the locations bounds
     intergenomic_sequence_string = ""  # intergenomic sequence
-    
+
     for feature in record.features:
 
-        locations= feature.location
+        locations = feature.location
         s = int(locations.nofuzzy_start)
         e = int(locations.nofuzzy_end)
         st = int(locations.strand)
-        
+
         gene_start = int(locations.nofuzzy_start)
 
         if gene_start > start:
@@ -95,10 +96,10 @@ for index, name in enumerate(files):
         if new_start != len(sequence):
             start = new_start
 
+        genes = str(sequence[s:e])
         #Reversing complementary strands
         if st == -1:
-            sequence_negativestrand = str(sequence[s:e])
-            sequence_negativestrand= sequence_negativestrand[::-1]
+            sequence_negativestrand= genes[::-1]
             sequence_negativestrand= sequence_negativestrand.replace("A","b")
             sequence_negativestrand= sequence_negativestrand.replace("T","A")
             sequence_negativestrand= sequence_negativestrand.replace("b","T")
@@ -106,36 +107,25 @@ for index, name in enumerate(files):
             sequence_negativestrand= sequence_negativestrand.replace("G","C")
             sequence_negativestrand= sequence_negativestrand.replace("d","G")
 
-        #Discarding the pseudogenes
-
-            ok = 0
             genes = str(sequence_negativestrand)
 
-
-            if len(genes)%3 != 0:
-                ok= 1
-            elif genes[:3] != "ATG" and genes[:3] != "GTG" and genes[:3] != "TTG":
-                ok= 2
-            elif genes[-3:] != "TAA" and genes[-3:] != "TAG" and genes[-3:] != "TGA":
-                ok= 3
-
-
-            if st == -1 and ok == 0:
-                coding_sequences.append(genes)
+        #Discarding the pseudogenes
         
         ok = 0
-        genes = str(sequence[s:e])
     
         if len(genes)%3 != 0:
-            ok= 1
+            ok = 1
         elif genes[:3] != "ATG" and genes[:3] != "GTG" and genes[:3] != "TTG":
-            ok= 2
+            ok = 2
         elif genes[-3:] != "TAA" and genes[-3:] != "TAG" and genes[-3:] != "TGA":
-            ok= 3
+            ok = 3
         elif len(genes) == len(sequence):
-            ok= 4
+            ok = 4
+        for triplet in range(0, len(cds)-3, 3): # Splitting the sequence in triplets discarding the last one
+            if triplet in ["ATG", "GTG", "TTG"]:
+                ok = 5  # Raises an error if a triplet in the middle of the gene is a stop codon
 
-        if st == 1 and ok == 0:
+        if ok == 0:
             coding_sequences.append(genes)
 
         #checking for errors
