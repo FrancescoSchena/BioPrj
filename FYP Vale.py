@@ -4,14 +4,14 @@ import pandas as pd
 
 from os import walk
 import os
-mypath = os.path.abspath(os.getcwd()) + "/genomes"
-ext = "embl"
+mypath = os.path.abspath(os.getcwd()) + "/filtered_genomes"
+
 files = []
 for (dirpath, dirnames, filenames) in walk(mypath):
-    for file in filenames:
-        if file.split(".")[1] == ext:  # Only files with the right extension
-            files.append(file)
+    files.extend(filenames)
     break
+
+ext = "embl"
 
 FileNames = []
 GCcontent = []
@@ -66,10 +66,9 @@ for index, name in enumerate(files):
     print("\n")
     print(f"Analyzing file {index+1} of {files_tot}: {name}")
     print("\n")
-    record = SeqIO.read(f'genomes/{name}', ext)
-
-    FileNames.append(str(name))
+    record = SeqIO.read(f'filtered_genomes/{name}', ext)
     sequence = record.seq
+    FileNames.append(str(name))
     
     start = 0
     coding_sequences = []
@@ -243,93 +242,7 @@ for index, name in enumerate(files):
     aminoacids_sequence = Seq(coding_sequencewhole[3:]).translate()
     print(f'Percentage of Methionine:    {(aminoacids_sequence.count("M") / len(aminoacids_sequence) * 100):.2f}%')
     MetPer.append(aminoacids_sequence.count("M") / len(aminoacids_sequence) * 100)
-        
-    # Codon usage for Arginine + R4 vs R2
-    CGAcount = 0
-    CGCcount = 0
-    CGGcount = 0
-    CGTcount = 0
-    AGAcount = 0
-    AGGcount = 0
-    for cds in coding_sequences:
-        for i in range(0, len(cds), 3):
-            codons = cds[i: i + 3]
-            CGA = codons.count("CGA")
-            CGAcount += CGA
-            CGC = codons.count("CGC")
-            CGCcount += CGC
-            CGG = codons.count("CGG")
-            CGGcount += CGG
-            CGT = codons.count("CGT")
-            CGTcount += CGT
-            AGA = codons.count("AGA")
-            AGAcount += AGA
-            AGG = codons.count("AGG")
-            AGGcount += AGG
-    Arginine4Total = CGGcount + CGAcount + CGCcount + CGTcount
-    Arginine2Total = AGAcount + AGGcount
-    Arg4Per.append(Arginine4Total)
-    Arg2Per.append(Arginine2Total)
-    Arg4GC.append((CGGcount + CGCcount) / (Arginine4Total) * 100)
-    Arg2GC.append(AGGcount / (Arginine2Total) * 100)
     
-    #Codon usage for Leucine + L4 vs L2
-    CTAcount = 0
-    CTCcount = 0
-    CTGcount = 0
-    CTTcount = 0
-    TTAcount = 0
-    TTGcount = 0
-    for cds in coding_sequences:
-        for i in range(0, len(cds), 3):
-            codons = cds[i: i + 3]
-            CTA = codons.count("CTA")
-            CTAcount += CTA
-            CTC = codons.count("CTC")
-            CTCcount += CTC
-            CTG = codons.count("CTG")
-            CTGcount += CTG
-            CTT = codons.count("CTT")
-            CTTcount += CTT
-            TTA = codons.count("TTA")
-            TTAcount += TTA
-            TTG = codons.count("TTG")
-            TTGcount += TTG
-    Leucine4Total = CTGcount + CTAcount + CTCcount + CTTcount
-    Leucine2Total = TTAcount + TTGcount
-    Leu4Per.append(Leucine4Total)
-    Leu2Per.append(Leucine2Total)
-    Leu4GC.append((CTGcount + CTCcount) / (Leucine4Total) * 100)
-    Leu2GC.append(TTGcount / (Leucine2Total) * 100)
-    
-    #Codon usage for Serine + S4 vs S2
-    TCAcount = 0
-    TCCcount = 0
-    TCGcount = 0
-    TCTcount = 0
-    AGAcount = 0
-    AGGcount = 0
-    for cds in coding_sequences:
-        for i in range(0, len(cds), 3):
-            codons = cds[i: i + 3]
-            TCA = codons.count("TCA")
-            TCAcount += TCA
-            TCC = codons.count("TCC")
-            TCCcount += TCC
-            TCG = codons.count("TCG")
-            TCGcount += TCG
-            TCT = codons.count("TCT")
-            TCTcount += TCT
-            AGA = codons.count("AGA")
-            AGAcount += AGA
-            AGG = codons.count("AGG")
-            AGGcount += AGG
-    Serine4Total = TCGcount + TCAcount + TCCcount + TCTcount
-    Serine2Total = AGAcount + AGGcount
-    Ser4Per.append(Serine4Total)
-    Ser2Per.append(Serine2Total)
-    Ser4GC.append((TCGcount + TCCcount) / (Serine4Total) * 100)
-    Ser2GC.append(AGGcount / (Serine2Total) * 100)
 
     # Codon usage for Valine
     GTAcount = 0
@@ -443,7 +356,7 @@ for index, name in enumerate(files):
             CATcount += CAT
             CAC = codons.count("CAC")
             CACcount += CAC
-    HistidineTotal = CATcount + CACcount
+            HistidineTotal = CATcount + CACcount
     HisGC.append(CACcount * 100 / HistidineTotal)
     
     # Codon usage for Glutamine
@@ -542,9 +455,84 @@ for index, name in enumerate(files):
             GGTcount += GGT
     GlycineTotal = GGAcount + GGCcount + GGGcount + GGTcount
     GlyGC.append((GGGcount + GGC) * 100 / (GlycineTotal))
-
-
-
+    
+    
+    # Codon usage for Arginine, Leucine and Serine
+    CGAcount = 0
+    CGCcount = 0
+    CGGcount = 0
+    CGTcount = 0
+    AGAcount = 0
+    AGGcount = 0
+    CTAcount = 0
+    CTCcount = 0
+    CTGcount = 0
+    CTTcount = 0
+    TTAcount = 0
+    TTGcount = 0
+    TCAcount = 0
+    TCCcount = 0
+    TCGcount = 0
+    TCTcount = 0
+    AGTcount = 0
+    AGCcount = 0
+    for cds in coding_sequences:
+        for i in range(0, len(cds), 3):
+            codons = cds[i: i + 3]
+            #Codon usage for Arginine
+            CGA = codons.count("CGA")
+            CGAcount += CGA
+            CGC = codons.count("CGC")
+            CGCcount += CGC
+            CGG = codons.count("CGG")
+            CGGcount += CGG
+            CGT = codons.count("CGT")
+            CGTcount += CGT
+            AGA = codons.count("AGA")
+            AGAcount += AGA
+            AGG = codons.count("AGG")
+            AGGcount += AGG
+            #Codon usage for Leucine
+            CTA = codons.count("CTA")
+            CTAcount += CTA
+            CTC = codons.count("CTC")
+            CTCcount += CTC
+            CTG = codons.count("CTG")
+            CTGcount += CTG
+            CTT = codons.count("CTT")
+            CTTcount += CTT
+            TTA = codons.count("TTA")
+            TTAcount += TTA
+            TTG = codons.count("TTG")
+            TTGcount += TTG
+            #Codon usage for Serine
+            TCA = codons.count("TCA")
+            TCAcount += TCA
+            TCC = codons.count("TCC")
+            TCCcount += TCC
+            TCG = codons.count("TCG")
+            TCGcount += TCG
+            TCT = codons.count("TCT")
+            TCTcount += TCT
+            AGT = codons.count("AGT")
+            AGTcount += AGT
+            AGC = codons.count("AGC")
+            AGCcount += AGC
+    Arginine4Total = CGGcount + CGAcount + CGCcount + CGTcount
+    Arginine2Total = AGAcount + AGGcount
+    Arg4Per.append(Arginine4Total/len(aminoacids_sequence)*100)
+    Arg2Per.append(Arginine2Total/len(aminoacids_sequence)*100)
+    Leucine4Total = CTGcount + CTAcount + CTCcount + CTTcount
+    Leucine2Total = TTAcount + TTGcount
+    Leu4Per.append(Leucine4Total/len(aminoacids_sequence)*100)
+    Leu2Per.append(Leucine2Total/len(aminoacids_sequence)*100)
+    Serine4Total = TCGcount + TCAcount + TCCcount + TCTcount
+    Serine2Total = AGTcount + AGCcount
+    Ser4Per.append(Serine4Total/len(aminoacids_sequence)*100)
+    Ser2Per.append(Serine2Total/len(aminoacids_sequence)*100)
+    
+    
+    
 df = pd.DataFrame(
     data=list(zip(
         FileNames,
@@ -577,6 +565,7 @@ df = pd.DataFrame(
         PheGC,
         Leu2GC,
         Leu4GC,
+        ValGC,
         Ser2GC,
         Ser4GC,
         ProGC,
@@ -625,6 +614,7 @@ df = pd.DataFrame(
         "PheGC",
         "Leu2GC",
         "Leu4GC",
+        "ValGC",
         "Ser2GC",
         "Ser4GC",
         "ProGC",
