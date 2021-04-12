@@ -1,5 +1,6 @@
 # Local artifacts
 *.txt
+*.ppt
 genomes/
 filtered_genomes/
 results/
