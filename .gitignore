@@ -1,5 +1,5 @@
 # Local artifacts
-
+*.txt
 genomes/
 filtered_genomes/
 results/
